@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Language Translator</title>
+<style>
+body { font-family: Arial; background: #eef2f3; text-align: center; padding: 50px; }
+textarea { width: 80%; height: 100px; }
+button { padding: 10px 20px; background: #4caf50; color: white; border: none; cursor: pointer; }
+.result { margin-top: 20px; font-size: 18px; color: #333; }
+</style>
+</head>
+<body>
+<h1 style="color:#4caf50;">Language Translator</h1>
+<form method="POST">
+    <textarea name="src_sentence" placeholder="Enter sentence in English..."></textarea><br><br>
+    <button type="submit">Translate</button>
+</form>
+<div class="result">
+    {% if prediction %}
+        <h3>Translation:</h3>
+        <p>{{ prediction }}</p>
+    {% endif %}
+</div>
+</body>
+</html>
