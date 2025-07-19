@@ -13,6 +13,7 @@
             font-family: 'Poppins', sans-serif;
             background-color: #f0f4f8; /* Light background */
             display: flex;
+            flex-direction: column; /* Allow footer to sit below */
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -33,6 +34,7 @@
             text-align: center;
             overflow: hidden; /* Hide the overflowing parts of the rotating border */
             z-index: 1;
+            margin-bottom: 20px; /* Space above footer */
         }
 
         /* --- 360 Degree Colorful Rotating Border --- */
@@ -41,34 +43,26 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 150%; /* Make it larger than the container */
+            width: 150%;
             height: 150%;
             z-index: -1;
-            background: conic-gradient(
-                from 0deg,
-                #ff6b6b, #feca57, #48dbfb, #1dd1a1, #ff9ff3, #ff6b6b
-            );
+            background: conic-gradient(from 0deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1, #ff9ff3, #ff6b6b);
             transform: translate(-50%, -50%);
             animation: rotate-border 6s linear infinite;
         }
 
-        /* The actual padding effect is created by an inner element */
         .translator-container::after {
             content: '';
             position: absolute;
-            inset: 5px; /* This creates the "padding" for the border */
+            inset: 5px;
             background: #ffffff;
             border-radius: 15px;
             z-index: -1;
         }
 
         @keyframes rotate-border {
-            0% {
-                transform: translate(-50%, -50%) rotate(0deg);
-            }
-            100% {
-                transform: translate(-50%, -50%) rotate(360deg);
-            }
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         /* --- Animated Header Text --- */
@@ -76,15 +70,11 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 30px;
-            /* Create a gradient background */
             background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1, #ff9ff3);
             background-size: 400% 400%;
-            /* Clip the background to the text */
             -webkit-background-clip: text;
             background-clip: text;
-            /* Make the text color transparent to show the gradient */
             color: transparent;
-            /* Animate the background position */
             animation: text-flow 8s ease-in-out infinite;
         }
 
@@ -93,8 +83,13 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+        
+        /* --- Input Area --- */
+        .input-area {
+            position: relative;
+            margin-bottom: 25px;
+        }
 
-        /* --- Input Textarea with Focus Animation --- */
         textarea {
             width: 100%;
             height: 120px;
@@ -106,33 +101,45 @@
             resize: none;
             box-sizing: border-box;
             transition: all 0.3s ease;
-            margin-bottom: 25px;
         }
 
-        /* "Flow" animation on focus */
         textarea:focus {
             outline: none;
             border-color: #48dbfb;
             box-shadow: 0 0 15px rgba(72, 219, 251, 0.5);
         }
+        
+        /* --- Buttons --- */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
 
-        /* --- Colorful Submit Button --- */
         button {
-            padding: 15px 40px;
+            padding: 15px 30px;
             font-size: 1.1rem;
             font-weight: 600;
             color: white;
             border: none;
             border-radius: 50px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        #translate-btn {
             background: linear-gradient(45deg, #ff6b6b, #f98a8a);
             box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
-            transition: all 0.3s ease;
         }
-
+        
         button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
         button:active {
@@ -142,17 +149,17 @@
         /* --- Animated Result Pop-up --- */
         .result {
             margin-top: 30px;
-            opacity: 0; /* Hidden by default */
+            opacity: 0;
             transform: scale(0.8) translateY(20px);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
+            visibility: hidden;
         }
 
-        /* This class will be added by your backend logic to show the result */
-        /* For demonstration, I'm showing it by default if the content exists */
         .result.show {
             opacity: 1;
             transform: scale(1) translateY(0);
+            visibility: visible;
         }
 
         .result h3 {
@@ -160,7 +167,7 @@
             margin-bottom: 10px;
         }
 
-        .result p {
+        .result > p { /* Target the main prediction text */
             font-size: 1.5rem;
             font-weight: 600;
             color: #222f3e;
@@ -168,7 +175,60 @@
             padding: 20px;
             border-radius: 12px;
             min-height: 60px;
+            white-space: pre-wrap;
         }
+        
+        /* --- Suggestions Section --- */
+        .suggestions {
+            margin-top: 25px;
+            text-align: left;
+            border: 1px solid #dbe2f0;
+            border-radius: 12px;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        .suggestions p {
+            font-size: 0.9rem;
+            color: #576574;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+        .suggestions .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .suggestions .tag {
+            background-color: #e9ecef;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .suggestions .tag:hover {
+            background-color: #ced4da;
+            transform: scale(1.05);
+        }
+
+        /* --- Note Section --- */
+        .disclaimer-note {
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: #e74c3c; /* Red color for the note */
+            padding: 10px;
+            background-color: rgba(231, 76, 60, 0.05);
+            border-radius: 8px;
+        }
+        .disclaimer-note a {
+            color: #c0392b;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .disclaimer-note a:hover {
+            text-decoration: underline;
+        }
+
 
         /* --- Twinkling Stars Animation --- */
         .star {
@@ -178,7 +238,6 @@
             animation: twinkle 1.5s infinite;
             opacity: 0;
         }
-
         .star.s1 { top: -10px; left: 15%; width: 8px; height: 8px; animation-delay: 0s; }
         .star.s2 { top: 20px; left: 5%; width: 12px; height: 12px; animation-delay: 0.2s; }
         .star.s3 { top: 50px; left: 18%; width: 6px; height: 6px; animation-delay: 0.8s; }
@@ -191,6 +250,14 @@
             50% { transform: scale(1.2); opacity: 1; }
             100% { transform: scale(0.5); opacity: 0; }
         }
+        
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            color: #888;
+            font-size: 0.9rem;
+        }
 
     </style>
 </head>
@@ -198,34 +265,72 @@
 
 <div class="translator-container">
     <h1>Banjara Language Translator</h1>
-    <form method="POST" action="#"> <!-- Using # for demo -->
-        <textarea name="src_sentence" placeholder="Enter a sentence in English..."></textarea><br>
-        <button type="submit">Translate</button>
+    
+    <!-- This form will now submit to your Flask backend -->
+    <form method="POST" action="/">
+        <div class="input-area">
+            <!-- The name="src_sentence" is crucial for Flask to get the data -->
+            <!-- The value is now safely accessed to prevent errors on initial load -->
+            <textarea id="src-sentence" name="src_sentence" placeholder="Enter a sentence in English...">{{ request.form.get('src_sentence', '') }}</textarea>
+        </div>
+
+        <div class="button-group">
+            <!-- The button is now a submit type -->
+            <button type="submit" id="translate-btn">Translate</button>
+        </div>
     </form>
 
-    <!-- 
-      The 'show' class makes the result visible with an animation.
-      Your backend template engine (like Flask/Jinja2) should add this class
-      conditionally when a prediction is available.
-      
-      Example with Jinja2:
-      <div class="result {% if prediction %}show{% endif %}">
-    -->
-    <div class="result {% if prediction %}show{% endif %}">
-        <!-- Stars for decoration -->
+    <!-- Suggestions Section -->
+    <div class="suggestions">
+        <p><strong>Try these sentences:</strong></p>
+        <div class="tags">
+            <span class="tag">go</span>
+            <span class="tag">come</span>
+            <span class="tag">i wrote it.</span>
+            <span class="tag">I was good.</span>
+            <span class="tag">I was away.</span>
+            <span class="tag">I saw that.</span>
+        </div>
+    </div>
+
+    <!-- The 'show' class is now added by Flask/Jinja2 if a prediction exists -->
+    <div class="result {% if prediction %}show{% endif %}" id="result-container">
         <div class="star s1"></div>
         <div class="star s2"></div>
         <div class="star s3"></div>
         <div class="star s4"></div>
         <div class="star s5"></div>
         <div class="star s6"></div>
-
         <h3>Translation:</h3>
-        
-        <!-- The prediction from your backend goes here -->
-        <p>{{ prediction or 'Your translation will appear here...' }}</p>
+        <!-- This now displays the prediction variable from your Flask app -->
+        <p id="prediction-text">{{ prediction }}</p>
     </div>
+
+    <!-- Disclaimer Note -->
+    <p class="disclaimer-note">
+        Note: This is not a fully accurate translator and needs improvement. If you are interested in collaborating, please contact me at <a href="mailto:chawanvin@gmail.com">chawanvin@gmail.com</a>.
+    </p>
 </div>
+
+<footer>
+    &copy; 2025 Vinod
+</footer>
+
+<script>
+    // --- DOM Elements ---
+    const srcSentenceTextarea = document.getElementById('src-sentence');
+    const suggestionTags = document.querySelectorAll('.suggestions .tag');
+
+    // --- Suggestion Tags Logic ---
+    // This part remains to allow users to click on suggestions
+    suggestionTags.forEach(tag => {
+        tag.addEventListener('click', () => {
+            srcSentenceTextarea.value = tag.textContent;
+            srcSentenceTextarea.focus();
+        });
+    });
+
+</script>
 
 </body>
 </html>
