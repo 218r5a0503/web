@@ -1,26 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Language Translator</title>
-<style>
-body { font-family: Arial; background: #eef2f3; text-align: center; padding: 50px; }
-textarea { width: 80%; height: 100px; }
-button { padding: 10px 20px; background: #4caf50; color: white; border: none; cursor: pointer; }
-.result { margin-top: 20px; font-size: 18px; color: #333; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banjara Language Translator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8; /* Light background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Main container for the translator */
+        .translator-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            overflow: hidden; /* Hide the overflowing parts of the rotating border */
+            z-index: 1;
+        }
+
+        /* --- 360 Degree Colorful Rotating Border --- */
+        .translator-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%; /* Make it larger than the container */
+            height: 150%;
+            z-index: -1;
+            background: conic-gradient(
+                from 0deg,
+                #ff6b6b, #feca57, #48dbfb, #1dd1a1, #ff9ff3, #ff6b6b
+            );
+            transform: translate(-50%, -50%);
+            animation: rotate-border 6s linear infinite;
+        }
+
+        /* The actual padding effect is created by an inner element */
+        .translator-container::after {
+            content: '';
+            position: absolute;
+            inset: 5px; /* This creates the "padding" for the border */
+            background: #ffffff;
+            border-radius: 15px;
+            z-index: -1;
+        }
+
+        @keyframes rotate-border {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* --- Animated Header Text --- */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            /* Create a gradient background */
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #1dd1a1, #ff9ff3);
+            background-size: 400% 400%;
+            /* Clip the background to the text */
+            -webkit-background-clip: text;
+            background-clip: text;
+            /* Make the text color transparent to show the gradient */
+            color: transparent;
+            /* Animate the background position */
+            animation: text-flow 8s ease-in-out infinite;
+        }
+
+        @keyframes text-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- Input Textarea with Focus Animation --- */
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #dbe2f0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            resize: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        /* "Flow" animation on focus */
+        textarea:focus {
+            outline: none;
+            border-color: #48dbfb;
+            box-shadow: 0 0 15px rgba(72, 219, 251, 0.5);
+        }
+
+        /* --- Colorful Submit Button --- */
+        button {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(45deg, #ff6b6b, #f98a8a);
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        /* --- Animated Result Pop-up --- */
+        .result {
+            margin-top: 30px;
+            opacity: 0; /* Hidden by default */
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        /* This class will be added by your backend logic to show the result */
+        /* For demonstration, I'm showing it by default if the content exists */
+        .result.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .result h3 {
+            color: #576574;
+            margin-bottom: 10px;
+        }
+
+        .result p {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #222f3e;
+            background: #f0f4f8;
+            padding: 20px;
+            border-radius: 12px;
+            min-height: 60px;
+        }
+
+        /* --- Twinkling Stars Animation --- */
+        .star {
+            position: absolute;
+            background-color: #feca57;
+            border-radius: 50%;
+            animation: twinkle 1.5s infinite;
+            opacity: 0;
+        }
+
+        .star.s1 { top: -10px; left: 15%; width: 8px; height: 8px; animation-delay: 0s; }
+        .star.s2 { top: 20px; left: 5%; width: 12px; height: 12px; animation-delay: 0.2s; }
+        .star.s3 { top: 50px; left: 18%; width: 6px; height: 6px; animation-delay: 0.8s; }
+        .star.s4 { top: -5px; right: 20%; width: 10px; height: 10px; animation-delay: 0.4s; }
+        .star.s5 { top: 30px; right: 10%; width: 7px; height: 7px; animation-delay: 1.1s; }
+        .star.s6 { top: 60px; right: 25%; width: 9px; height: 9px; animation-delay: 0.6s; }
+
+        @keyframes twinkle {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.5); opacity: 0; }
+        }
+
+    </style>
 </head>
 <body>
-<h1 style="color:#4caf50;">Language Translator</h1>
-<form method="POST">
-    <textarea name="src_sentence" placeholder="Enter sentence in English..."></textarea><br><br>
-    <button type="submit">Translate</button>
-</form>
-<div class="result">
-    {% if prediction %}
+
+<div class="translator-container">
+    <h1>Banjara Language Translator</h1>
+    <form method="POST" action="#"> <!-- Using # for demo -->
+        <textarea name="src_sentence" placeholder="Enter a sentence in English..."></textarea><br>
+        <button type="submit">Translate</button>
+    </form>
+
+    <!-- 
+      The 'show' class makes the result visible with an animation.
+      Your backend template engine (like Flask/Jinja2) should add this class
+      conditionally when a prediction is available.
+      
+      Example with Jinja2:
+      <div class="result {% if prediction %}show{% endif %}">
+    -->
+    <div class="result {% if prediction %}show{% endif %}">
+        <!-- Stars for decoration -->
+        <div class="star s1"></div>
+        <div class="star s2"></div>
+        <div class="star s3"></div>
+        <div class="star s4"></div>
+        <div class="star s5"></div>
+        <div class="star s6"></div>
+
         <h3>Translation:</h3>
-        <p>{{ prediction }}</p>
-    {% endif %}
+        
+        <!-- The prediction from your backend goes here -->
+        <p>{{ prediction or 'Your translation will appear here...' }}</p>
+    </div>
 </div>
+
 </body>
 </html>
